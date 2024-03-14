@@ -1,0 +1,23 @@
+.uuid {
+  position: relative;
+}
+
+.buttons {
+  justify-content: space-between;
+}
+
+.buttons input,
+.buttons button {
+  width: 100px !important;
+}
+
+.uuid button {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  height: 34px;
+  padding: 3px 6px;
+  border: none;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
