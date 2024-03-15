@@ -19,6 +19,15 @@ export function getAllOrder() {
   });
 }
 
+export function getAllProductsOrder(data) {
+  return new Promise((resolve) => {
+    ipcRenderer.once("getAllProductsOrder-reply", (_, arg) => {
+      resolve(arg);
+    });
+    ipcRenderer.send("getAllProductsOrder", data);
+  });
+}
+
 // export function editProduct(data) {
 //   return new Promise((resolve) => {
 //     ipcRenderer.once("editProduct-reply", (_, arg) => {
@@ -28,11 +37,28 @@ export function getAllOrder() {
 //   });
 // }
 
-// export function deleteProduct(data) {
-//   return new Promise((resolve) => {
-//     ipcRenderer.once("deleteProduct-reply", (_, arg) => {
-//       resolve(arg);
-//     });
-//     ipcRenderer.send("deleteProduct", data);
-//   });
-// }
+export function deleteOrder(data) {
+  return new Promise((resolve) => {
+    ipcRenderer.once("deleteOrder-reply", (_, arg) => {
+      resolve(arg);
+    });
+    ipcRenderer.send("deleteOrder", data);
+  });
+}
+
+export function editOrder(data) {
+  return new Promise((resolve) => {
+    ipcRenderer.once("editOrder-reply", (_, arg) => {
+      resolve(arg);
+    });
+    ipcRenderer.send("editOrder", data);
+  });
+}
+export function deleteProductOrder(data) {
+  return new Promise((resolve) => {
+    ipcRenderer.once("deleteProductOrder-reply", (_, arg) => {
+      resolve(arg);
+    });
+    ipcRenderer.send("deleteProductOrder", data);
+  });
+}

@@ -11,7 +11,6 @@ export const TableOrderAll = ({ dataTable, handleQuantity, actions }) => {
           <th>Nome do Cliente</th>
           <th className={styles.size}>Valor</th>
           <th className={styles.size}>Quantidade</th>
-
           <th className={styles.size}>Actions</th>
         </tr>
       </thead>
@@ -23,7 +22,7 @@ export const TableOrderAll = ({ dataTable, handleQuantity, actions }) => {
               <td>{item.name} </td>
               <td>{formatPrice(item.value)}</td>
               <td className={styles.quantity}>
-                <span
+                {/* <span
                   onClick={() => {
                     const qty = +item.quantity - 1;
                     if (qty > 0) handleQuantity(item.id, -1);
@@ -31,9 +30,9 @@ export const TableOrderAll = ({ dataTable, handleQuantity, actions }) => {
                   className={styles.control}
                 >
                   -
-                </span>
+                </span> */}
                 <span>{item.quantity}</span>
-                <span
+                {/* <span
                   className={styles.control}
                   onClick={() => {
                     const qty = +item.quantity + 1;
@@ -41,7 +40,7 @@ export const TableOrderAll = ({ dataTable, handleQuantity, actions }) => {
                   }}
                 >
                   +
-                </span>
+                </span> */}
               </td>
               {/* <td>{formatPrice(item.value)} </td> */}
               <td>{actions(item)}</td>

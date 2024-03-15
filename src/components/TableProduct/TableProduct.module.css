@@ -3,10 +3,6 @@
   width: 800px;
 }
 
-.container tr:nth-child(even) {
-  background-color: #eee;
-}
-
 .container td svg {
   margin: 0 0.5rem;
 }
