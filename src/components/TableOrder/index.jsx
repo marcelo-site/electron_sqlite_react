@@ -2,7 +2,7 @@ import { formatPrice } from "../../utils/formatprice";
 import styles from "./TableOrder.module.css";
 
 export const TableOrder = ({ dataTable, handleQuantity, actions }) => {
-  console.log("dataOrder", dataTable);
+  // console.log("dataOrder", dataTable);
   return (
     <table className={styles.container}>
       <thead>

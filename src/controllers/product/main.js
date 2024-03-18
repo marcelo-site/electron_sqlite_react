@@ -1,5 +1,5 @@
 import electron from "electron";
-import database from "../../../db.js";
+import { database } from "../../db.js";
 import { ModelProduct } from "../../models/ModelProduct.js";
 
 const { ipcMain } = electron;
@@ -17,7 +17,7 @@ ipcMain.on("createProduct", async (event, arg) => {
 
     if (!result) throw new Error("Não foi possível fazer o registro!");
 
-    event.reply("createProduct-reply", result);
+    event.reply("createProduct-reply", result.dataValues);
   } catch (error) {
     console.log(error);
     event.reply("createProduct-reply", error.message);

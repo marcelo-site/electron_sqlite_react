@@ -1,8 +1,9 @@
 import electron from "electron";
-import database from "../../../db.js";
+import { database } from "../../db.js";
 import { ModelOrder } from "../../models/ModelOrder.js";
 import { ModelProductOrder } from "../../models/ModelProductOrder.js";
 import { ModelProduct } from "../../models/ModelProduct.js";
+import { Op } from "sequelize";
 
 const { ipcMain } = electron;
 
@@ -37,10 +38,18 @@ ipcMain.on("createOrder", async (event, arg) => {
   }
 });
 
-ipcMain.on("getAllOrder", async (event, _) => {
+ipcMain.on("getAllOrder", async (event, arg) => {
   try {
     await database.sync();
-    const result = await ModelOrder.findAll({ raw: true });
+    const result = await ModelOrder.findAll({
+      where: {
+        createdAt: {
+          [Op.gte]: arg.init,
+          [Op.lte]: arg.end,
+        },
+      },
+      raw: true,
+    });
 
     if (!result) throw new Error("Não foi possível fazer o registro!");
 
@@ -126,7 +135,6 @@ ipcMain.on("deleteOrder", async (event, arg) => {
 
 ipcMain.on("editOrder", async (event, arg) => {
   try {
-    console.log(arg);
     const { name, quantity, value } = arg;
 
     if (!!name || !!quantity || !!value) {
@@ -145,7 +153,6 @@ ipcMain.on("editOrder", async (event, arg) => {
               { quantity: item.quantity },
               {
                 where: { productId: item.productId },
-                // raw: true,
               }
             );
             await ModelProduct.update(
@@ -158,9 +165,9 @@ ipcMain.on("editOrder", async (event, arg) => {
         })
       );
     }
-    event.reply("deleteOrder-reply", { id: arg.id });
+    event.reply("editOrder-reply", { id: arg.id });
   } catch (error) {
-    event.reply("deleteOrder-reply", error?.message);
+    event.reply("editOrder-reply", error?.message);
   }
 });
 

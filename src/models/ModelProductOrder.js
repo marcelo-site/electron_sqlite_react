@@ -1,7 +1,8 @@
 import Sequelize from "sequelize";
-import database from "../../db.js";
+import { database } from "../db.js";
 import { ModelOrder } from "./ModelOrder.js";
 import { ModelProduct } from "./ModelProduct.js";
+await database.sync();
 
 export const ModelProductOrder = database.define("productOrder", {
   id: {

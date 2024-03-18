@@ -3,7 +3,7 @@
 }
 
 .buttons {
-  justify-content: space-between;
+  justify-content: flex-start !important;
 }
 
 .buttons input,
@@ -14,10 +14,21 @@
 .uuid button {
   position: absolute;
   right: 1px;
+  gap: 5px;
   top: 1px;
-  height: 34px;
+  height: 35px;
   padding: 3px 6px;
   border: none;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  background-color: var(--dark-color);
+  color: white;
+}
+
+.uuid svg {
+  font-size: 1.25em;
+}
+
+a {
+  text-decoration: none;
 }

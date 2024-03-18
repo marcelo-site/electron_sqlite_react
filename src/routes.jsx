@@ -12,7 +12,7 @@ export default function AppRoutes() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/create-order" element={<CreateOrderPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace={true} />} />
+      <Route path="*" element={<Navigate to="./" replace={true} />} />
     </Routes>
   );
 }

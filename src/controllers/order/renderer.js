@@ -10,12 +10,12 @@ export function createOrder(data) {
   });
 }
 
-export function getAllOrder() {
+export function getAllOrder(period) {
   return new Promise((resolve) => {
     ipcRenderer.once("getAllOrder-reply", (_, arg) => {
       resolve(arg);
     });
-    ipcRenderer.send("getAllOrder", undefined);
+    ipcRenderer.send("getAllOrder", period);
   });
 }
 
@@ -27,15 +27,6 @@ export function getAllProductsOrder(data) {
     ipcRenderer.send("getAllProductsOrder", data);
   });
 }
-
-// export function editProduct(data) {
-//   return new Promise((resolve) => {
-//     ipcRenderer.once("editProduct-reply", (_, arg) => {
-//       resolve(arg);
-//     });
-//     ipcRenderer.send("editProduct", data);
-//   });
-// }
 
 export function deleteOrder(data) {
   return new Promise((resolve) => {
@@ -49,6 +40,7 @@ export function deleteOrder(data) {
 export function editOrder(data) {
   return new Promise((resolve) => {
     ipcRenderer.once("editOrder-reply", (_, arg) => {
+      console.log("arg", arg);
       resolve(arg);
     });
     ipcRenderer.send("editOrder", data);

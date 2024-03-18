@@ -15,9 +15,13 @@ import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 
 export const Home = () => {
-  const [response, setResponse] = useState();
-  const [dataTable, setDataTable] = useState();
-  const [valueProduct, setValuProduct] = useState();
+  const [dataTable, setDataTable] = useState([]);
+  const [valueProduct, setValuProduct] = useState({
+    code: "",
+    name: "",
+    price: "",
+    stock: "",
+  });
   const [deleteData, setDeleteDate] = useState();
   const [edit, setEdit] = useState(false);
   const [modal, setModal] = useState(false);
@@ -44,6 +48,11 @@ export const Home = () => {
   };
 
   const submitProduct = (product) => {
+    if (!product) return;
+
+    const { code, name, price, stock } = product;
+    if (code === "" || name === "" || price === "" || stock === "") return;
+
     if (edit) {
       editProduct(product).then((res) => {
         setDataTable((prev) => {
@@ -55,7 +64,7 @@ export const Home = () => {
       });
     } else {
       createProduct(product).then((res) => {
-        setResponse(JSON.stringify(res));
+        setDataTable((prev) => [...prev, res]);
       });
     }
   };
@@ -73,7 +82,7 @@ export const Home = () => {
     return (
       <>
         {<Pencil onClick={() => handleEdit(item)} />}
-        {<Trash onClick={() => handleDelete(item)} />}
+        {<Trash onClick={() => controlModalDelete(item)} />}
       </>
     );
   };
@@ -92,8 +101,14 @@ export const Home = () => {
         onSubmit={submitProduct}
         edit={edit}
       />
-      {dataTable && <TabaleProduct dataTable={dataTable} actions={actions} />}
-      {response && <div>{response}</div>}
+
+      {dataTable.length > 0 ? (
+        <TabaleProduct dataTable={dataTable} actions={actions} />
+      ) : (
+        <div style={{ textAlign: "center", marginTop: 50 }}>
+          Cadastre seus produtos para visualizar aqui
+        </div>
+      )}
     </main>
   );
 };

@@ -7,6 +7,7 @@ export const Input = ({
   handleChange,
   value,
   label,
+  readOnly,
 }) => {
   return (
     <div className={styles.container}>
@@ -18,6 +19,8 @@ export const Input = ({
         autoComplete="off"
         placeholder={placeholder}
         onChange={handleChange}
+        readOnly={readOnly}
+        spellCheck="false"
       />
     </div>
   );

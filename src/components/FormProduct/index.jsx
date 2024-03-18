@@ -2,6 +2,7 @@ import styles from "./FormProduct.module.css";
 import { Input } from "../Input/index.jsx";
 import { useEffect, useState } from "react";
 import { _uuid } from "../../utils/uuid.js";
+import { ReactComponent as Generate } from "../../assets/icons/arrow-repeat.svg";
 
 export const FormProduct = ({ value, handleValue, onSubmit, edit }) => {
   const [product, setProduct] = useState(value ? value : {});
@@ -23,51 +24,60 @@ export const FormProduct = ({ value, handleValue, onSubmit, edit }) => {
   useEffect(() => setProduct(value), [value]);
 
   return (
-    <form onSubmit={() => onSubmit(product)} className={`form`}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(product);
+      }}
+      className="form"
+    >
       <div className={styles.uuid}>
-        <button onClick={gerarId} type="button">
-          Gerar ID
+        <button className="flex" onClick={gerarId} type="button">
+          <Generate />
+          Gerar
         </button>
         <Input
-          type={"text"}
-          name={"code"}
+          type="text"
+          name="code"
           value={product?.code || ""}
           placeholder={"Código do Produto"}
           handleChange={(e) => handleChange(e.target.name, e.target.value)}
         />
       </div>
       <Input
-        type={"text"}
-        name={"name"}
+        type="text"
+        name="name"
         value={product?.name || ""}
-        placeholder={"Nome"}
+        placeholder="Nome do produto"
         handleChange={(e) => handleChange(e.target.name, e.target.value)}
       />
       <div className={`flex ${styles.flex}`}>
         <Input
-          type={"number"}
-          name={"price"}
+          type="number"
+          name="price"
           value={product?.price || ""}
-          placeholder={"Preço"}
+          placeholder="Preço"
           handleChange={(e) => handleChange(e.target.name, +e.target.value)}
         />
         <Input
-          type={"number"}
-          name={"stock"}
+          type="number"
+          name="stock"
           value={product?.stock || ""}
-          placeholder={"Estoque"}
+          placeholder="Estoque"
           handleChange={(e) => handleChange(e.target.name, e.target.value)}
         />
       </div>
       <div className={`flex ${styles.buttons}`}>
         <input
-          className="btn btn-success"
+          className="btn btn-dark"
           type="submit"
           value={edit ? "Editar" : "Cadastrar"}
         />
-        <button onClick={handleValue} className="btn btn-blue" type="button">
-          Cancelar
-        </button>
+        {edit && (
+          <button onClick={handleValue} className="btn btn-blue" type="button">
+            Cancelar
+          </button>
+        )}
       </div>
     </form>
   );

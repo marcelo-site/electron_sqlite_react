@@ -1,28 +1,22 @@
 import { shell } from "electron";
+import { openBackup, saveBackup } from "./backup.js";
 
-export const templateMenu = [
+const templateMenu = [
   {
-    label: "Salvar",
+    label: "Backup",
     submenu: [
       {
-        label: "Salvar PDF da planilha",
-        accelerator: "CmdOrCtrl+shift+P",
-        click() {
-          savePDF();
-        },
-      },
-      {
-        label: "Exportar Modelo",
+        label: "Exportar Backup",
         accelerator: "CmdOrCtrl+shift+s",
         click() {
-          saveFileAs(".txt");
+          saveBackup();
         },
       },
       {
-        label: "Importar Modelo",
+        label: "Importar Backup",
         accelerator: "CmdOrCtrl+shift+A",
         click() {
-          openFile();
+          openBackup();
         },
       },
     ],
@@ -99,3 +93,5 @@ export const templateMenu = [
     ],
   },
 ];
+
+export default templateMenu;

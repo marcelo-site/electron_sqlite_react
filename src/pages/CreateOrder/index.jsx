@@ -10,9 +10,11 @@ import { TableOrder } from "../../components/TableOrder/index.jsx";
 
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 import { BtnAddOrder } from "./BtnAddProduct.jsx";
+import { Button } from "../../components/Button/index.jsx";
+import { Link } from "react-router-dom";
 
 export const CreateOrderPage = () => {
-  const [dataTable, setDataTable] = useState();
+  const [dataTableProduct, setDataTableProduct] = useState([]);
   const [order, setOrder] = useState({
     name: "",
     quantity: 0,
@@ -28,14 +30,14 @@ export const CreateOrderPage = () => {
   };
 
   const handleAdd = (data) => {
-    const newDataTable = dataTable.map((item) => {
+    const newDataTable = dataTableProduct.map((item) => {
       if (item.id === data.id) {
         item.active = false;
         item.stock = item.stock - 1;
       }
       return item;
     });
-    setDataTable(newDataTable);
+    setDataTableProduct(newDataTable);
 
     const value = { ...data, quantity: 1 };
     setOrder((prev) => ({ ...prev, products: [...prev.products, value] }));
@@ -48,34 +50,28 @@ export const CreateOrderPage = () => {
     });
     setOrder((prev) => ({ ...prev, products: newOrderProducts }));
 
-    const newDataTable = dataTable.map((item) => {
+    const newDataTable = dataTableProduct.map((item) => {
       if (item.id === id) item.stock = item.stock + -n;
       return item;
     });
-    setDataTable(newDataTable);
+    setDataTableProduct(newDataTable);
   };
 
-  const actions = (data) => <BtnAddOrder data={data} handleAdd={handleAdd} />;
-
   const deleteProductOrder = (data) => {
-    const newDataTable = dataTable.map((item) => {
+    const newDataTable = dataTableProduct.map((item) => {
       if (item.id === data.id) {
         item.active = true;
         item.stock = item.stock + data.quantity;
       }
       return item;
     });
+    setDataTableProduct(newDataTable);
 
-    setDataTable(newDataTable);
     setOrder((prev) => ({
       ...prev,
       products: prev.products.filter((item) => item.id !== data.id),
     }));
   };
-
-  const actionOrder = (data) => (
-    <Trash onClick={() => deleteProductOrder(data)} />
-  );
 
   useEffect(() => {
     let newOrder = order.products.reduce(
@@ -86,12 +82,19 @@ export const CreateOrderPage = () => {
       },
       { value: 0, quantity: 0 }
     );
-    setOrder({ ...order, ...newOrder });
+    setOrder((prev) => ({ ...prev, ...newOrder }));
   }, [order.products]);
+
+  const handleCreteOrder = () => {
+    const { name, quantity, value, products } = order;
+    if (!!name && !!quantity && !!value && !!products.length) {
+      createOrder(order);
+    }
+  };
 
   useEffect(() => {
     getAllProduct().then((res) => {
-      setDataTable(() =>
+      setDataTableProduct(() =>
         res.map((item) => ({
           ...item,
           active: true,
@@ -100,27 +103,50 @@ export const CreateOrderPage = () => {
     });
   }, []);
 
+  if (dataTableProduct.length === 0) {
+    return (
+      <div className={styles.empty}>
+        <p>Você não tem produto cadastrado</p>
+        <p>
+          <Link to="/">Cadastre clicando aqui</Link>
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.container}>
-      <h1>Crinado Pedido</h1>
+    <main className={styles.container}>
+      <h1>Cadastrar Pedido</h1>
       <FormOrder order={order} handleChange={handleOrder} />
       {!!order.products.length && (
         <>
-          <h2>Pedido</h2>
+          <h2>Produtos</h2>
           <TableOrder
             dataTable={order.products}
             handleQuantity={handleQuantity}
-            actions={actionOrder}
+            actions={(data) => (
+              <Trash onClick={() => deleteProductOrder(data)} />
+            )}
           />
-          <button onClick={() => createOrder(order)}>Cadastrar</button>
+          <Button
+            text="Cadastrar"
+            type="success"
+            sizeContainer={800}
+            handleClick={handleCreteOrder}
+          />
         </>
       )}
-      {dataTable && (
+      {dataTableProduct.length > 0 && (
         <>
           <h2>Produtos</h2>
-          <TabaleProduct dataTable={dataTable} actions={actions} />
+          <TabaleProduct
+            dataTable={dataTableProduct}
+            actions={(data) => (
+              <BtnAddOrder data={data} handleAdd={handleAdd} />
+            )}
+          />
         </>
       )}
-    </div>
+    </main>
   );
 };

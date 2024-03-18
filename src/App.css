@@ -4,12 +4,17 @@
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
 }
-body {
-  padding-top: 30px;
+
+:root {
+  --dark-color: #343a40;
+  --dark-color: #3d4247;
 }
 
-h1 {
+h1,
+h2,
+h3 {
   text-align: center;
+  color: var(--dark-color);
 }
 
 main {
@@ -48,6 +53,10 @@ table button ~ img {
 a.btn {
   text-decoration: none;
   color: white;
+}
+
+a.active {
+  color: tomato !important;
 }
 
 .btn-dark {
@@ -116,8 +125,26 @@ table tr:nth-child(even) {
   background-color: #eee;
 }
 
+table tr th {
+  background-color: var(--dark-color);
+  color: white;
+  /* background-color: #eee; */
+  font-weight: 400;
+  font-size: 1.25rem;
+  border: none;
+}
+
 table tr:hover {
   background-color: #dedede;
+}
+
+table td svg {
+  margin: 0 0.5rem;
+}
+
+table {
+  margin: 1.5rem auto;
+  width: 800px;
 }
 
 /* table button img {

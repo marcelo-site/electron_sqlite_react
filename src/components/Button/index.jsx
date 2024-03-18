@@ -1,9 +1,9 @@
-import styles from "./Button.module.css";
-
-export const Button = () => {
+export const Button = ({ text, handleClick, type, sizeContainer }) => {
   return (
-    <button className={styles.container} id="btn-update">
-      Atualizar
-    </button>
+    <div style={{ width: `${sizeContainer}px`, margin: "auto" }}>
+      <button onClick={handleClick} className={`btn btn-${type}`}>
+        {text}
+      </button>
+    </div>
   );
 };

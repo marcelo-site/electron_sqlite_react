@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
 
 export const Navbar = () => {
@@ -7,13 +7,17 @@ export const Navbar = () => {
       <nav>
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            <NavLink to="/">Home</NavLink>
           </li>
           <li>
-            <Link to="/orders">Vendas</Link>
+            <NavLink to="/orders" end>
+              Vendas
+            </NavLink>
           </li>
           <li>
-            <Link to="/create-order">Criar Vendas</Link>
+            <NavLink to="/create-order" end>
+              Cadastrar
+            </NavLink>
           </li>
         </ul>
       </nav>
