@@ -1,14 +1,12 @@
 import { Menu, BrowserWindow, app } from "electron";
-import * as path from "path";
-import { fileURLToPath } from "url";
+import path from "path";
 
 import "../src/controllers/product/main.js";
 import "../src/controllers/order/main.js";
 
 import templateMenu from "./menu.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const isDev = !app.isPackaged;
 
 let mainWindow;
 
@@ -22,13 +20,8 @@ function createWindow() {
     },
   });
 
-  const isDev = process.env.NODE_ENV === "development";
-
-  mainWindow.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
-  );
+  const filePath = `file://${path.join(app.getAppPath(), "/build/index.html")}`;
+  mainWindow.loadURL(isDev ? "http://localhost:3000" : filePath);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -39,9 +32,7 @@ function createWindow() {
   }
 }
 
-app.on("ready", () => {
-  createWindow();
-});
+// app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -51,7 +42,7 @@ app.on("window-all-closed", () => {
 
 const menu = Menu.buildFromTemplate(templateMenu);
 Menu.setApplicationMenu(menu);
-// app.whenReady().then(createWindow);
+app.whenReady().then(createWindow);
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) {

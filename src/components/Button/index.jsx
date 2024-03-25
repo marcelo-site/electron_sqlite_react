@@ -1,9 +1,7 @@
-export const Button = ({ text, handleClick, type, sizeContainer }) => {
+export const Button = ({ text, handleClick, type }) => {
   return (
-    <div style={{ width: `${sizeContainer}px`, margin: "auto" }}>
-      <button onClick={handleClick} className={`btn btn-${type}`}>
-        {text}
-      </button>
-    </div>
+    <button onClick={handleClick} className={`btn btn-${type}`}>
+      {text}
+    </button>
   );
 };

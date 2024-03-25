@@ -1,10 +1,8 @@
-import styles from "./FormOrder.module.css";
 import { Input } from "../Input";
 
 export const FormOrder = ({ handleChange, order, edit }) => {
-  const value = +order.value;
   return (
-    <form className={`${styles.container} form`}>
+    <form className={`form`}>
       {edit && (
         <Input
           name={"id"}
@@ -34,7 +32,7 @@ export const FormOrder = ({ handleChange, order, edit }) => {
           name="value"
           placeholder="Valor do pedido"
           type="number"
-          value={value.toFixed(2)}
+          value={Number(order.value).toFixed(2)}
         />
       </div>
     </form>

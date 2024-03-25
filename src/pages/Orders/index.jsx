@@ -1,6 +1,6 @@
 import styles from "./CreateOrder.module.css";
-
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   getAllProductsOrder,
   getAllOrder,
@@ -13,18 +13,17 @@ import { FormOrder } from "../../components/FormOrder";
 import { TableOrder } from "../../components/TableOrder/index.jsx";
 import { ReactComponent as Eye } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
-import { ReactComponent as ChevronLeft } from "../../assets/icons/chevron-left.svg";
-import { ReactComponent as ChevronRigth } from "../../assets/icons/chevron-right.svg";
+import { ReactComponent as Chevron } from "../../assets/icons/chevron-left.svg";
 import { TableOrderAll } from "../../components/TabbleOrderAll/index.jsx";
 import { Modal } from "../../components/Modal/index.jsx";
-import { Button } from "../../components/Button/index.jsx";
 import { editDatePeriod, editDataInit } from "./editPeriod.js";
+import { Button } from "../../components/Button/index.jsx";
 
 export const OrdersPage = () => {
   const [period, setPeriod] = useState(() => editDatePeriod(new Date()));
   const [orders, setOrders] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalOpen2, setModalOpen2] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   const [orderEdit, setOrderEdit] = useState(editDataInit);
   const [editDataMap, setEditdataMap] = useState(editDataInit);
   const [deleteOrderData, setDeleteOrderData] = useState({});
@@ -59,7 +58,6 @@ export const OrdersPage = () => {
   const handleQuantity = (id, n) => {
     const newOrderProducts = orderEdit.products.map((item) => {
       if (item.id === id) item.quantity = item.quantity + n;
-
       return item;
     });
 
@@ -82,41 +80,63 @@ export const OrdersPage = () => {
 
   const handleDeleteModal = (data) => {
     if (data) {
-      deleteOrder(deleteOrderData).then((res) => {
-        if (typeof res === "object") {
-          setOrders((prev) =>
-            prev.filter((item) => item.id !== deleteOrderData.id)
-          );
-        }
-      });
+      try {
+        deleteOrder(deleteOrderData).then((res) => {
+          if (res?.error) {
+            toast.error(res.error);
+          } else {
+            toast.success("Pedido deletado com sucesso!");
+            setOrders((prev) =>
+              prev.filter((item) => item.id !== deleteOrderData.id)
+            );
+          }
+        });
+      } catch (error) {
+        toast.error("Algum erro aconteceu nessa operação!");
+      }
     }
     setModalOpen(false);
   };
 
   const handleDeleteModal2 = (data) => {
+    setModalDelete(false);
     if (data) {
-      deleteProductOrder({ ...delProductData, orderId: orderEdit.id }).then(
-        (res) => {
-          if (res?.count > 0) {
-            setOrderEdit((prev) => ({
-              ...prev,
-              products: prev.products.filter((item) => item.id !== res.id),
-            }));
+      try {
+        deleteProductOrder({ ...delProductData, orderId: orderEdit.id }).then(
+          (res) => {
+            if (res?.error) {
+              toast.error(res.error);
+            } else {
+              toast.success("Produto deletado deste pedido com sucesso!");
+              setOrderEdit((prev) => ({
+                ...prev,
+                products: prev.products.filter((item) => item.id !== res.id),
+              }));
+            }
           }
-        }
-      );
+        );
+      } catch (error) {
+        toast.error("Algum erro aconteceu nessa operação!");
+      }
     }
-    setModalOpen2(false);
   };
 
   const handleDelProductOrder = (data) => {
     setDeleteProduct(data);
-    setModalOpen2(true);
+    setModalDelete(true);
   };
 
   const handlePeriod = (n) => {
     setOrderEdit(editDataInit);
     setPeriod(() => editDatePeriod(period.init, n));
+  };
+
+  const handleEdit = (edit) => {
+    if (edit) {
+      editOrder(editDataMap).then(() => window.location.reload(true));
+    } else {
+      setOrderEdit(editDataInit);
+    }
   };
 
   useEffect(() => {
@@ -133,21 +153,26 @@ export const OrdersPage = () => {
   }, [orderEdit.products]);
 
   useEffect(() => {
-    getAllOrder(period).then((res) => setOrders(() => res));
+    try {
+      getAllOrder(period).then((res) => {
+        if (!res) throw new Error("");
+        setOrders(() => res);
+      });
+    } catch (error) {
+      toast.error("Algum erro aconteceu na busca dos dados!");
+    }
   }, [period]);
 
   return (
     <main className={styles.container}>
-      <h1>Pedidos</h1>
       {modalOpen && (
         <Modal code={deleteOrderData.id} handleClick={handleDeleteModal} />
       )}
-      {modalOpen2 && (
+      {modalDelete && (
         <Modal code={deleteOrderData.id} handleClick={handleDeleteModal2} />
       )}
       {!!orderEdit.products.length && (
         <>
-          <h2>Pedido</h2>
           <FormOrder order={orderEdit} handleChange={handleOrder} edit={true} />
           <h2>Produtos do Pedido</h2>
           <TableOrder
@@ -157,22 +182,31 @@ export const OrdersPage = () => {
               <Trash onClick={() => handleDelProductOrder(data)} />
             )}
           />
-          <Button
-            text="Editar"
-            type="dark"
-            handleClick={() =>
-              editOrder(editDataMap).then(() => window.location.reload(true))
-            }
-            sizeContainer={800}
-          />
+          <div className="containerBtn">
+            <Button
+              handleClick={() => handleEdit(true)}
+              text="Editar"
+              type="dark"
+            />
+            <Button
+              handleClick={() => handleEdit(false)}
+              text="Cancelar"
+              type="blue"
+            />
+          </div>
+          <hr style={{ width: 960, margin: "16px auto" }} />
         </>
       )}
+      <h1>Todos os Pedidos</h1>
       <div className={styles.period}>
-        <ChevronLeft onClick={() => handlePeriod(-1)} />
+        <Chevron onClick={() => handlePeriod(-1)} />
         <span>
           {period.month} {period.year}
         </span>
-        <ChevronRigth onClick={() => handlePeriod(1)} />
+        <Chevron
+          style={{ transform: "rotate(180deg)" }}
+          onClick={() => handlePeriod(1)}
+        />
       </div>
       {!!orders.length ? (
         <TableOrderAll

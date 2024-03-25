@@ -3,6 +3,7 @@ import { Input } from "../Input/index.jsx";
 import { useEffect, useState } from "react";
 import { _uuid } from "../../utils/uuid.js";
 import { ReactComponent as Generate } from "../../assets/icons/arrow-repeat.svg";
+import { Button } from "../Button/index.jsx";
 
 export const FormProduct = ({ value, handleValue, onSubmit, edit }) => {
   const [product, setProduct] = useState(value ? value : {});
@@ -67,16 +68,14 @@ export const FormProduct = ({ value, handleValue, onSubmit, edit }) => {
           handleChange={(e) => handleChange(e.target.name, e.target.value)}
         />
       </div>
-      <div className={`flex ${styles.buttons}`}>
+      <div className="containerBtn">
         <input
           className="btn btn-dark"
           type="submit"
           value={edit ? "Editar" : "Cadastrar"}
         />
         {edit && (
-          <button onClick={handleValue} className="btn btn-blue" type="button">
-            Cancelar
-          </button>
+          <Button handleClick={handleValue} text={"Cancelar"} type={"blue"} />
         )}
       </div>
     </form>

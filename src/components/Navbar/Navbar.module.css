@@ -1,6 +1,10 @@
 .container {
   background-color: var(--dark-color);
   padding: 8px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
 }
 
 .container nav ul {

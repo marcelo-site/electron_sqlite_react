@@ -1,6 +1,6 @@
 export const formatPrice = (n) => {
   return n.toLocaleString("pt-br", {
-    style: "currency",
-    currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 };

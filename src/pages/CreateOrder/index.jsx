@@ -1,26 +1,20 @@
 import styles from "./CreateOrder.module.css";
-
 import { useEffect, useState } from "react";
-import { FormOrder } from "../../components/FormOrder";
 
 import { getAllProduct } from "../../controllers/product/renderer.js";
-import { createOrder } from "../../controllers/order/renderer.js";
-import { TabaleProduct } from "../../components/TableProduct";
-import { TableOrder } from "../../components/TableOrder/index.jsx";
+import { handleCreteOrder, orderInit } from "./handleCreateOrder.js";
 
+import { TableProduct } from "../../components/TableProduct";
+import { TableOrder } from "../../components/TableOrder/index.jsx";
+import { FormOrder } from "../../components/FormOrder";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 import { BtnAddOrder } from "./BtnAddProduct.jsx";
 import { Button } from "../../components/Button/index.jsx";
-import { Link } from "react-router-dom";
+import { ProductEmpty } from "./ProductEmpty.jsx";
 
 export const CreateOrderPage = () => {
   const [dataTableProduct, setDataTableProduct] = useState([]);
-  const [order, setOrder] = useState({
-    name: "",
-    quantity: 0,
-    value: 0,
-    products: [],
-  });
+  const [order, setOrder] = useState(orderInit);
 
   const handleOrder = (e) => {
     setOrder((prev) => ({
@@ -85,13 +79,6 @@ export const CreateOrderPage = () => {
     setOrder((prev) => ({ ...prev, ...newOrder }));
   }, [order.products]);
 
-  const handleCreteOrder = () => {
-    const { name, quantity, value, products } = order;
-    if (!!name && !!quantity && !!value && !!products.length) {
-      createOrder(order);
-    }
-  };
-
   useEffect(() => {
     getAllProduct().then((res) => {
       setDataTableProduct(() =>
@@ -104,14 +91,7 @@ export const CreateOrderPage = () => {
   }, []);
 
   if (dataTableProduct.length === 0) {
-    return (
-      <div className={styles.empty}>
-        <p>Você não tem produto cadastrado</p>
-        <p>
-          <Link to="/">Cadastre clicando aqui</Link>
-        </p>
-      </div>
-    );
+    return <ProductEmpty />;
   }
 
   return (
@@ -128,18 +108,20 @@ export const CreateOrderPage = () => {
               <Trash onClick={() => deleteProductOrder(data)} />
             )}
           />
-          <Button
-            text="Cadastrar"
-            type="success"
-            sizeContainer={800}
-            handleClick={handleCreteOrder}
-          />
+          <div className="containerBtn">
+            <Button
+              text="Cadastrar"
+              type="dark"
+              sizeContainer={960}
+              handleClick={() => handleCreteOrder(order)}
+            />
+          </div>
         </>
       )}
       {dataTableProduct.length > 0 && (
         <>
           <h2>Produtos</h2>
-          <TabaleProduct
+          <TableProduct
             dataTable={dataTableProduct}
             actions={(data) => (
               <BtnAddOrder data={data} handleAdd={handleAdd} />

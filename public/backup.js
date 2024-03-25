@@ -31,7 +31,6 @@ export const openBackup = async () => {
     if (res.response === 0) {
       fs.copyFile(dialogFile.filePaths[0], "./database.sqlite", (err) => {
         if (err) throw err;
-        console.log("source.txt was copied to destination.txt");
       });
     }
   } catch (error) {
@@ -51,11 +50,10 @@ export const saveBackup = async () => {
       return false;
     }
     fs.copyFile(
-      path.join(app.getAppPath(), "/database.sqlite"),
+      path.join(app.getAppPath(), "/public/database.sqlite"),
       dialogFile.filePath,
       (err) => {
         if (err) throw err;
-        console.log("source.txt was copied to destination.txt");
       }
     );
   } catch (error) {

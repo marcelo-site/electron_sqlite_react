@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
 import {
   createProduct,
   getAllProduct,
@@ -8,26 +8,22 @@ import {
 } from "../../controllers/product/renderer.js";
 
 import { FormProduct } from "../../components/FormProduct";
-import { TabaleProduct } from "../../components/TableProduct";
+import { TableProduct } from "../../components/TableProduct";
 import { Modal } from "../../components/Modal/index.jsx";
-
 import { ReactComponent as Pencil } from "../../assets/icons/pencil.svg";
 import { ReactComponent as Trash } from "../../assets/icons/trash.svg";
 
+import { validInputs, valueProductInit } from "./validInputs.js";
+
 export const Home = () => {
   const [dataTable, setDataTable] = useState([]);
-  const [valueProduct, setValuProduct] = useState({
-    code: "",
-    name: "",
-    price: "",
-    stock: "",
-  });
+  const [valueProduct, setValueProduct] = useState(valueProductInit);
   const [deleteData, setDeleteDate] = useState();
   const [edit, setEdit] = useState(false);
   const [modal, setModal] = useState(false);
 
   const handleEdit = (data) => {
-    setValuProduct(data);
+    setValueProduct(data);
     setEdit(true);
   };
 
@@ -37,55 +33,81 @@ export const Home = () => {
   };
 
   const handleDelete = (data) => {
+    setModal(false);
     if (data) {
       deleteProduct(deleteData).then((res) => {
-        if (typeof res === "object") {
+        if (res?.error) {
+          toast.error(res.error);
+        } else {
+          toast.success("produto deletado com sucesso!");
           setDataTable((prev) => prev.filter((item) => item.id !== res.id));
         }
       });
     }
-    setModal(false);
   };
 
   const submitProduct = (product) => {
-    if (!product) return;
-
-    const { code, name, price, stock } = product;
-    if (code === "" || name === "" || price === "" || stock === "") return;
+    const valid = validInputs(product);
+    if (!valid) return;
 
     if (edit) {
-      editProduct(product).then((res) => {
-        setDataTable((prev) => {
-          return prev.map((item) => {
-            if (res.id === item.id) return res;
-            return item;
-          });
+      try {
+        editProduct(product).then((res) => {
+          if (!res) throw new Error("");
+
+          if (res?.error) {
+            toast.error(res.error);
+          } else {
+            toast.success("Produto editado com sucesso!");
+            setDataTable((prev) => {
+              return prev.map((item) => {
+                if (res.id === item.id) return res;
+                return item;
+              });
+            });
+          }
         });
-      });
+      } catch (error) {
+        toast.error("Algum erro aconteceu na edição do  produto!");
+      }
     } else {
-      createProduct(product).then((res) => {
-        setDataTable((prev) => [...prev, res]);
-      });
+      try {
+        createProduct(product).then((res) => {
+          if (res?.error) {
+            toast.error(res.error);
+          } else {
+            toast.success("produto criado com sucesso!");
+            setDataTable((prev) => [...prev, res]);
+          }
+        });
+      } catch (error) {
+        toast.error("Algum erro aconteceu na criação do  produto!");
+      }
     }
   };
 
   const handleValueProps = () => {
-    setValuProduct(null);
+    setValueProduct(valueProductInit);
     setEdit(false);
   };
 
-  useEffect(() => {
-    getAllProduct().then((res) => setDataTable(() => res));
-  }, []);
+  const actions = (item) => (
+    <>
+      {<Pencil onClick={() => handleEdit(item)} />}
+      {<Trash onClick={() => controlModalDelete(item)} />}
+    </>
+  );
 
-  const actions = (item) => {
-    return (
-      <>
-        {<Pencil onClick={() => handleEdit(item)} />}
-        {<Trash onClick={() => controlModalDelete(item)} />}
-      </>
-    );
-  };
+  useEffect(() => {
+    try {
+      getAllProduct().then((res) => {
+        if (!res) throw new Error("");
+        setDataTable(() => res);
+      });
+    } catch (error) {
+      toast.error("Algum erro aconteceu na busca dos dados!");
+    }
+  }, []);
 
   return (
     <main>
@@ -103,7 +125,10 @@ export const Home = () => {
       />
 
       {dataTable.length > 0 ? (
-        <TabaleProduct dataTable={dataTable} actions={actions} />
+        <>
+          <h1>Todos os produtos</h1>
+          <TableProduct dataTable={dataTable} actions={actions} />
+        </>
       ) : (
         <div style={{ textAlign: "center", marginTop: 50 }}>
           Cadastre seus produtos para visualizar aqui

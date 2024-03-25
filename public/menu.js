@@ -70,14 +70,14 @@ const templateMenu = [
     label: "Autor",
     submenu: [
       {
-        label: "Marcelo-Site",
+        label: "Site",
 
         click() {
           shell.openExternal("https://marcelo-site.github.io/portifolio/");
         },
       },
       {
-        label: "Marcelo-Facebook",
+        label: "Facebook",
         click() {
           shell.openExternal(
             "https://www.facebook.com/profile.php?id=100015225941991"
@@ -85,7 +85,7 @@ const templateMenu = [
         },
       },
       {
-        label: "Marcelo-Instagram",
+        label: "Instagram",
         click() {
           shell.openExternal("https://www.instagram.com/marcelosouza5224/");
         },

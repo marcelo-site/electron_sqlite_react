@@ -21,10 +21,7 @@ export const Modal = ({ code, handleClick }) => {
           >
             Ok
           </button>
-          <button
-            onClick={() => handleClick(false)}
-            className="btn btn-warning"
-          >
+          <button onClick={() => handleClick(false)} className="btn btn-blue">
             Cancelar
           </button>
         </div>

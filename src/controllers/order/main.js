@@ -1,11 +1,9 @@
-import electron from "electron";
+import { ipcMain } from "electron";
 import { database } from "../../db.js";
 import { ModelOrder } from "../../models/ModelOrder.js";
 import { ModelProductOrder } from "../../models/ModelProductOrder.js";
 import { ModelProduct } from "../../models/ModelProduct.js";
 import { Op } from "sequelize";
-
-const { ipcMain } = electron;
 
 ipcMain.on("createOrder", async (event, arg) => {
   try {
@@ -30,11 +28,10 @@ ipcMain.on("createOrder", async (event, arg) => {
         await product.save();
       })
     );
-
     event.reply("createOrder-reply", result);
   } catch (error) {
     console.log(error);
-    event.reply("createOrder-reply", error.message);
+    event.reply("createOrder-reply", { error: error.message });
   }
 });
 
@@ -56,7 +53,7 @@ ipcMain.on("getAllOrder", async (event, arg) => {
     event.reply("getAllOrder-reply", result);
   } catch (error) {
     console.log(error);
-    event.reply("getAllOrder-reply", error.message);
+    event.reply("getAllOrder-reply", { error: error.message });
   }
 });
 
@@ -76,7 +73,6 @@ ipcMain.on("getAllProductsOrder", async (event, data) => {
     if (!result) throw new Error("Não foi possível fazer o registro!");
 
     const productOrders = [];
-
     await Promise.all(
       result.map(async (item) => {
         if (item["products.id"] === null) {
@@ -84,6 +80,7 @@ ipcMain.on("getAllProductsOrder", async (event, data) => {
         } else {
           const product = {
             id: item["products.id"],
+            code: item["products.code"],
             name: item["products.name"],
             price: item["products.price"],
             quantity: item["products.productOrder.quantity"],
@@ -95,11 +92,10 @@ ipcMain.on("getAllProductsOrder", async (event, data) => {
         }
       })
     );
-
     event.reply("getAllProductsOrder-reply", productOrders);
   } catch (error) {
     console.log(error);
-    event.reply("getAllProductsOrder-reply", error.message);
+    event.reply("getAllProductsOrder-reply", { error: error.message });
   }
 });
 
@@ -116,6 +112,8 @@ ipcMain.on("deleteOrder", async (event, arg) => {
       where: { id: arrIds },
     });
 
+    if (!!ordersDel) throw new Error("Não foi possível deletar o pedido!");
+
     await Promise.all(
       orders.map(async (item) => {
         const product = await ModelProduct.findByPk(item.productId);
@@ -124,12 +122,13 @@ ipcMain.on("deleteOrder", async (event, arg) => {
       })
     );
     const product = await ModelOrder.destroy({ where: { id: arg.id } });
-    if (!product) throw new Error("Não foi possível fazer o registro!");
-
+    if (!product) {
+      throw new Error("Não foi possível fazer o registro do pedido!");
+    }
     event.reply("deleteOrder-reply", { id: arg.id });
   } catch (error) {
     console.log(error);
-    event.reply("deleteOrder-reply", error.message);
+    event.reply("deleteOrder-reply", { error: error.message });
   }
 });
 
@@ -155,6 +154,7 @@ ipcMain.on("editOrder", async (event, arg) => {
                 where: { productId: item.productId },
               }
             );
+
             await ModelProduct.update(
               { stock: item.stock },
               {
@@ -167,7 +167,7 @@ ipcMain.on("editOrder", async (event, arg) => {
     }
     event.reply("editOrder-reply", { id: arg.id });
   } catch (error) {
-    event.reply("editOrder-reply", error?.message);
+    event.reply("editOrder-reply", { error: error.message });
   }
 });
 
@@ -177,14 +177,14 @@ ipcMain.on("deleteProductOrder", async (event, arg) => {
       where: { id: arg.productOrderId },
     });
 
+    if (delProductOrder === 0) throw new Error("Produto não foi deletado!");
+
     const stock = arg.quantity + arg.stock;
     await ModelProduct.update({ stock }, { where: { id: arg.id } });
-    event.reply("deleteProductOrder-reply", {
-      count: delProductOrder,
-      id: arg.id,
-    });
+
+    event.reply("deleteProductOrder-reply", { id: arg.id });
   } catch (error) {
     console.log(error);
-    event.reply("deleteProductOrder-reply", error.message);
+    event.reply("deleteProductOrder-reply", { error: error.message });
   }
 });

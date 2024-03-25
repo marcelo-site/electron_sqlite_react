@@ -1,15 +1,15 @@
 import { formatPrice } from "../../utils/formatprice";
 
-export const TabaleProduct = ({ dataTable, actions }) => {
+export const TableProduct = ({ dataTable, actions }) => {
   return (
     <table>
       <thead>
         <tr>
-          <th>ID</th>
+          <th>Código</th>
           <th>Nome</th>
-          <th style={{ width: "120px" }}>Preço</th>
-          <th style={{ width: "120px" }}>Estoque</th>
-          <th style={{ width: "120px" }}>Ações</th>
+          <th className="w-104">Preço</th>
+          <th className="w-104">Estoque</th>
+          <th className="w-104">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -17,7 +17,7 @@ export const TabaleProduct = ({ dataTable, actions }) => {
           dataTable.map((item) => {
             return (
               <tr key={item.id + "product"}>
-                <td>{item.id} </td>
+                <td>{item.code} </td>
                 <td>{item.name} </td>
                 <td>{formatPrice(item.price)} </td>
                 <td>{item.stock} </td>

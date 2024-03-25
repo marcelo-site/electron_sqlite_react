@@ -2,15 +2,6 @@
   position: relative;
 }
 
-.buttons {
-  justify-content: flex-start !important;
-}
-
-.buttons input,
-.buttons button {
-  width: 100px !important;
-}
-
 .uuid button {
   position: absolute;
   right: 1px;
